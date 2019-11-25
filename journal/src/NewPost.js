@@ -8,7 +8,7 @@ function NewPost({ onSubmit, value }) {
 
   async function _onSubmit(e) {
     e.preventDefault();
-    if(await onSubmit(post)) {
+    if (await onSubmit(post)) {
       return;
     }
     setPost("");
@@ -19,9 +19,7 @@ function NewPost({ onSubmit, value }) {
   // the page.
   useEffect(() => {
     const intervalId = window.setInterval(() => {
-      if (post.length) {
-        db.set("post", post);
-      }
+      db.set("post", post);
     }, 1000);
 
     return () => clearInterval(intervalId);

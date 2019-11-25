@@ -59,7 +59,7 @@ export default class Store {
   }
 
   static async fromDID(did) {
-    const store = new Store(did);
+    const store = new Store(null, did);
     await store.init();
     store.tree = new ChainTree({
       store: store.community.blockservice,

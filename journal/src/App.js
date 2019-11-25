@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Box, Grommet } from "grommet";
 import Tupelo from "./tupelo.js";
+import TupeloLoader from "./TupeloLoader.js";
+import AppBar from "./AppBar.js";
 import Header from "./Header.js";
 import Entries from "./Entries.js";
+import Settings from "./Settings.js";
 import "./global.css";
 
 const theme = {
@@ -14,20 +18,6 @@ const theme = {
     }
   }
 };
-
-const AppBar = props => (
-  <Box
-    tag="header"
-    direction="row"
-    align="center"
-    justify="between"
-    background="brand"
-    pad={{ left: "medium", right: "small", vertical: "small" }}
-    elevation="medium"
-    style={{ zIndex: "1" }}
-    {...props}
-  />
-);
 
 function App() {
   const [tupelo, setTupelo] = useState();
@@ -43,15 +33,30 @@ function App() {
   } else {
     return (
       <Grommet theme={theme} full>
-        <Box align="center">
-          <Box fill>
-            <AppBar>Tupelo's Journal</AppBar>
+        <Router>
+          <Box align="center">
+            <Box fill>
+              <AppBar />
+            </Box>
+            <Box width="large">
+              <Switch>
+                <Route exact path="/">
+                  <Header tupelo={tupelo} />
+                  <Entries tupelo={tupelo} />
+                </Route>
+                <Route exact path="/journal/:did">
+                  <TupeloLoader>
+                    <Header />
+                    <Entries />
+                  </TupeloLoader>
+                </Route>
+                <Route path="/settings">
+                  <Settings tupelo={tupelo} />
+                </Route>
+              </Switch>
+            </Box>
           </Box>
-          <Box width="large">
-            <Header tupelo={tupelo} />
-            <Entries tupelo={tupelo} />
-          </Box>
-        </Box>
+        </Router>
       </Grommet>
     );
   }
