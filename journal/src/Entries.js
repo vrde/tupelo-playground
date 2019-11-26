@@ -9,6 +9,7 @@ function Entries({ tupelo }) {
     async function getEntries() {
       const [today] = new Date().toISOString().split("T");
       let entries = Object.keys(await tupelo.get("entries", {}));
+      console.log("getentries", entries);
       entries.sort();
       entries.reverse();
       if (!entries.includes(today)) {

@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
+import {
+  HashRouter as Router,
+  Switch,
+  Redirect,
+  Route,
+  Link
+} from "react-router-dom";
+import PrivateRoute from "./PrivateRoute";
 import { Box, Grommet } from "grommet";
-import Tupelo from "./tupelo.js";
+import Tupelo, { getKey, loadWasm } from "./tupelo.js";
 import TupeloLoader from "./TupeloLoader.js";
 import AppBar from "./AppBar.js";
 import Header from "./Header.js";
 import Entries from "./Entries.js";
 import Settings from "./Settings.js";
-import "./global.css";
+import Login from "./Login.js";
+import db from "./db.js";
 
 const theme = {
   global: {
@@ -20,16 +28,33 @@ const theme = {
 };
 
 function App() {
+  const [loading, setLoading] = useState("Loading Tupelo WASM SDK");
   const [tupelo, setTupelo] = useState();
 
   window.tupelo = tupelo;
 
   useEffect(() => {
-    Tupelo.fromKey().then(setTupelo);
+    async function loadTupelo() {
+      await loadWasm();
+      setLoading("Connecting to Network");
+      const privateKey = await getKey();
+      if (privateKey) {
+        const tupelo = await Tupelo.fromKey(privateKey);
+        setTupelo(tupelo);
+      }
+      setLoading(null);
+    }
+    loadTupelo();
   }, []);
 
-  if (tupelo === undefined) {
-    return <p>Loading Tupelo WASM SDK, please wait...</p>;
+  async function onLogin(key) {
+    const tupelo = await Tupelo.fromKey(key);
+    setTupelo(tupelo);
+  }
+
+  console.log("render", tupelo);
+  if (loading) {
+    return <p>{loading}, please wait...</p>;
   } else {
     return (
       <Grommet theme={theme} full>
@@ -40,18 +65,21 @@ function App() {
             </Box>
             <Box width="large">
               <Switch>
-                <Route exact path="/">
+                <PrivateRoute exact path="/" isAuthenticated={tupelo}>
                   <Header tupelo={tupelo} />
                   <Entries tupelo={tupelo} />
-                </Route>
-                <Route exact path="/journal/:did">
+                </PrivateRoute>
+                <Route exact path="/journal/:username">
                   <TupeloLoader>
                     <Header />
                     <Entries />
                   </TupeloLoader>
                 </Route>
-                <Route path="/settings">
+                <PrivateRoute path="/settings" isAuthenticated={tupelo}>
                   <Settings tupelo={tupelo} />
+                </PrivateRoute>
+                <Route path="/login">
+                  <Login onLogin={onLogin} />
                 </Route>
               </Switch>
             </Box>

@@ -6,7 +6,8 @@ function Header({ tupelo }) {
   const [name, setName] = useState("Unknown");
 
   useEffect(() => {
-    tupelo.get("name").then(setName);
+    console.log("header", tupelo);
+    tupelo.get("username").then(setName);
   }, [tupelo]);
 
   return <Heading level={1}>{name}'s Journal</Heading>;

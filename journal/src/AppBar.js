@@ -14,7 +14,7 @@ const AppBar = props => (
     style={{ zIndex: "1" }}
     {...props}
   >
-    <Text>Tupelo's Journal</Text>
+    <Text>tujo</Text>
     <Link to="/">
       <Button label="Home" />
     </Link>

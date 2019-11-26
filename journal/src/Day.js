@@ -57,7 +57,7 @@ function Day({ tupelo, date, path }) {
   return (
     <Box>
       <Heading level={2}>{date}</Heading>
-      {today === date && <NewPost onSubmit={onSubmitNew} />}
+      {today === date && tupelo.key && <NewPost onSubmit={onSubmitNew} />}
       {edit && (
         <Layer
           onEsc={() => setEdit(false)}
@@ -84,16 +84,18 @@ function Day({ tupelo, date, path }) {
               __html: DOMPurify.sanitize(marked(post))
             }}
           />
-          <Box>
-            <Menu
-              size="small"
-              label="actions"
-              items={[
-                { label: "Edit", onClick: () => onEdit(time) },
-                { label: "Delete", onClick: () => onDelete(time) }
-              ]}
-            />
-          </Box>
+          {tupelo.key && (
+            <Box>
+              <Menu
+                size="small"
+                label="actions"
+                items={[
+                  { label: "Edit", onClick: () => onEdit(time) },
+                  { label: "Delete", onClick: () => onDelete(time) }
+                ]}
+              />
+            </Box>
+          )}
         </Box>
       ))}
     </Box>

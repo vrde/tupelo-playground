@@ -23,6 +23,10 @@ class DB {
   has(key) {
     return this.storage[key] !== undefined;
   }
+
+  remove(key) {
+    this.storage.removeItem(key);
+  }
 }
 
 export default new DB();
